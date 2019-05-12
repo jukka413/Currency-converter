@@ -12,25 +12,17 @@ import com.example.currencyconverter.viewmodel.model.CurrencyRate
 
 class RateViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
 
-    val rateLayout: View
-    val currencyName: TextView
-    val currencyImage: ImageView
-    val currencyDesc: TextView
-    val currencyRateEdit: EditText
+    val rateLayout: View = this.itemView.findViewById(R.id.rateLayout)
+    private val currencyName: TextView = this.itemView.findViewById(R.id.currencyNameTextView)
+    private val currencyImage: ImageView = this.itemView.findViewById(R.id.currencyImageView)
+    private val currencyDesc: TextView = this.itemView.findViewById(R.id.currencyDescTextView)
+    private val currencyRateEdit: EditText = this.itemView.findViewById(R.id.rateEditText)
 
-    init {
-        rateLayout = this.itemView.findViewById(R.id.rateLayout)
-        currencyImage = this.itemView.findViewById(R.id.currencyImageView)
-        currencyName = this.itemView.findViewById(R.id.currencyNameTextView)
-        currencyDesc = this.itemView.findViewById(R.id.currencyDescTextView)
-        currencyRateEdit = this.itemView.findViewById(R.id.rateEditText)
-    }
     fun bindTo(currencyRate: CurrencyRate, position: Int, valueWatcher: TextWatcher) {
 
         currencyRateEdit.isEnabled = position == 0
 
         currencyRateEdit.removeTextChangedListener(valueWatcher)
-        // set on text changed listener
         if (position==0)
             currencyRateEdit.addTextChangedListener(valueWatcher)
 
@@ -68,13 +60,13 @@ class RateViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
         } catch (e: Exception) { 0 }
 
         if (currencyFlag==0)
-            currencyFlag = R.drawable.ic_eu
+            currencyFlag = R.drawable.ic_cat
 
         return currencyFlag
     }
 
     private fun getCurrencyDesc(currencyName: String): String {
-        var currencyDescName: String
+        val currencyDescName: String
 
         val resources = currencyDesc.context.resources
         val packageName = currencyDesc.context.packageName
@@ -82,7 +74,7 @@ class RateViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
         currencyDescName= try {
             resources.getString(resources.getIdentifier(currencyName, "string", packageName))
         } catch (e: Exception) {
-            "N/A"
+            "Err"
         }
         return currencyDescName
     }

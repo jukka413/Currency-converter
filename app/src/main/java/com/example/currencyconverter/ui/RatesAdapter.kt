@@ -12,11 +12,7 @@ import android.os.Handler
 import com.example.currencyconverter.R
 import java.util.*
 
-/**
- * RatesAdapter to be used by the RecyclerView
- * It used a DiffUtil Callback with payload to
- * minimize UI lag and unnecessary data reload
- */
+
 class RatesAdapter(private val callback: OnRateInteraction) : RecyclerView.Adapter<RateViewHolder>() {
 
     private val handler:Handler = Handler()
@@ -37,9 +33,6 @@ class RatesAdapter(private val callback: OnRateInteraction) : RecyclerView.Adapt
 
     init {
 
-        /** We set out TextWatcher here so it can be reused
-         *  This will pick up the value being entered in the root rate only
-         */
         this.valueWatcher = object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(newValue: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -48,10 +41,10 @@ class RatesAdapter(private val callback: OnRateInteraction) : RecyclerView.Adapt
                 val strValue: String = newValue.toString().trim()
                 var value: Float
 
-                try {
-                    value = strValue.toFloat()
+                value = try {
+                    strValue.toFloat()
                 } catch (e: Exception) {
-                    value = 0F
+                    0F
                 }
 
                 ratesList!![0].value = value
@@ -61,41 +54,36 @@ class RatesAdapter(private val callback: OnRateInteraction) : RecyclerView.Adapt
     }
 
     override fun onCreateViewHolder(p0: ViewGroup, viewType: Int): RateViewHolder {
-        var parent=p0
 
-        val view: View = LayoutInflater.from(parent!!.context)
-            .inflate(R.layout.rate, parent, false)
+        val view: View = LayoutInflater.from(p0.context)
+            .inflate(R.layout.rate, p0, false)
 
         val rateHolder = RateViewHolder(view)
 
-        rateHolder.rateLayout.setOnClickListener( object : View.OnClickListener  {
-            override fun onClick(clickedView: View?) {
-
-                val pos: Int = rateHolder . getAdapterPosition ();
-                if (pos != RecyclerView.NO_POSITION && pos>0) {
-                    callback.onRateChanged(ratesList!![pos].currency, ratesList!![pos].value)
-                }
+        rateHolder.rateLayout.setOnClickListener {
+            val pos: Int = rateHolder .adapterPosition
+            if (pos != RecyclerView.NO_POSITION && pos>0) {
+                callback.onRateChanged(ratesList!![pos].currency, ratesList!![pos].value)
             }
-        });
+        }
 
         return rateHolder
     }
 
     override fun onBindViewHolder(p0: RateViewHolder, position: Int) {
-        var holder=p0
-        holder?.bindTo(ratesList!![position],position,valueWatcher)
+        p0.bindTo(ratesList!![position],position,valueWatcher)
     }
 
     override fun onBindViewHolder(holder: RateViewHolder, position: Int, payloads: MutableList<Any>) {
 
-        val set = payloads?.firstOrNull() as Set<String>?
+        val set = payloads.firstOrNull() as Set<String>?
 
         if (set==null || set.isEmpty() ) {
             return super.onBindViewHolder(holder, position, payloads)
         }
 
         if (set.contains(RatesDiff.VALUE_CHG)){
-            holder?.updateValue(ratesList!![position],position)
+            holder.updateValue(ratesList!![position],position)
         }
     }
 
@@ -103,18 +91,11 @@ class RatesAdapter(private val callback: OnRateInteraction) : RecyclerView.Adapt
         return if (ratesList==null) 0 else ratesList!!.size
     }
 
-    /** Return two different types: Root and all others
-     *  This makes sure that the user can only change
-     *  the rool element's value
-     */
     override fun getItemViewType(position: Int): Int {
         return if (position==0) ROOT_RATE else OTHER_RATE
     }
 
-    /** Since the data is coming from Network on a loop
-     *  we try to update always with the latest data received
-     */
-    val pendingList: Deque<List<CurrencyRate>> = LinkedList()
+    private val pendingList: Deque<List<CurrencyRate>> = LinkedList()
 
     fun updateList(newRatesList: List<CurrencyRate>) {
         if (ratesList == null) {
@@ -131,11 +112,8 @@ class RatesAdapter(private val callback: OnRateInteraction) : RecyclerView.Adapt
         calculateDiff(newRatesList)
     }
 
-    /** We call the DiffUtil callback on a thread to maximize
-     *  UI performance with minimal lag
-     */
     private fun calculateDiff(latest: List<CurrencyRate>) {
-        Thread({
+        Thread {
 
             val diffResult = DiffUtil.calculateDiff(RatesDiff(ratesList!!, latest))
 
@@ -151,11 +129,9 @@ class RatesAdapter(private val callback: OnRateInteraction) : RecyclerView.Adapt
             }
 
             if (pendingList.size>0){
-                // Get the latest data
                 calculateDiff(pendingList. pop())
-                // Remove possible outdated data so we don't process it
                 pendingList.clear()
             }
-        }).start()
+        }.start()
     }
 }

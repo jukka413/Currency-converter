@@ -1,9 +1,9 @@
 package com.example.currencyconverter.viewmodel
 
-import android.arch.lifecycle.ViewModel
 import com.example.currencyconverter.api.ApiClient
 import com.example.currencyconverter.api.model.LatestRates
 import com.example.currencyconverter.viewmodel.model.CurrencyRate
+import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
@@ -12,11 +12,10 @@ import android.arch.lifecycle.Observer
 class RatesViewModel: ViewModel()  {
     private val RATE_UPDATE: Any = Object()
 
-    // Default values
     private var baseCurrency: String = "EUR"
-    private var baseValue: Float = 100F
+    private var baseValue: Float = 0f
 
-    private val latestRatesObs: Observer<LatestRates>;
+    private val latestRatesObs: Observer<LatestRates>
     private val currencyRates: MutableLiveData<List<CurrencyRate>> = MutableLiveData()
 
 
@@ -52,14 +51,13 @@ class RatesViewModel: ViewModel()  {
     fun getCurrencyRates() : LiveData<List<CurrencyRate>> = currencyRates
 
     fun refreshRates() {
-        ApiClient.refreshLatestRates(baseCurrency);
+        ApiClient.refreshLatestRates(baseCurrency)
     }
 
     fun setNewBase(newBaseCurrency: String, newBaseValue: Float) {
 
-        // Ignore if same
-        if (baseCurrency.equals(newBaseCurrency))
-            return;
+        if (baseCurrency==(newBaseCurrency))
+            return
 
         baseCurrency = newBaseCurrency
         baseValue = newBaseValue
@@ -67,7 +65,6 @@ class RatesViewModel: ViewModel()  {
     }
 
     fun setNewBaseValue(value: Float) {
-        // Ignore so it doesn't enter an infinite loop
         if (baseValue.equals(value))
             return
 

@@ -28,9 +28,6 @@ object ApiClient {
         service = retrofit.create(ApiInterface::class.java)
     }
 
-    /**
-     * Use LiveData to subscribe the latest data from the server
-     */
     fun getLatestRates() : LiveData<LatestRates> =
         latestRates
 
@@ -38,7 +35,6 @@ object ApiClient {
 
         service.getLatestRates(baseCurrency).enqueue(object : Callback<LatestRates> {
             override fun onFailure(call: Call<LatestRates>?, t: Throwable?) {
-                //Handle errors - No internet connection, etc
             }
 
             override fun onResponse(call: Call<LatestRates>, response: Response<LatestRates>) {
