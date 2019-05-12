@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.arch.lifecycle.ViewModelProviders
 import com.example.currencyconverter.ui.RatesFragment
 import com.example.currencyconverter.viewmodel.RatesViewModel
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Locale.setDefault(Locale.US)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -19,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayFragmentRates() {
-
+        Locale.setDefault(Locale.US)
         val fm = supportFragmentManager
         val fragmentTransaction = fm.beginTransaction()
 
