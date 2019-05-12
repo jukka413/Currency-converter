@@ -13,3 +13,4 @@ ToDo:
 - Retrofit2
 - ViewModel/LiveData ( https://developer.android.com/topic/libraries/architecture/viewmodel.html  https://habr.com/ru/post/332562/  )
 - RecyclerView ( https://developer.android.com/reference/android/support/v7/widget/RecyclerView  )
+- Иконки отсюда https://icon-icons.com/
